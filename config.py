@@ -1,0 +1,6 @@
+API_KEY_M = "AIzaSyB4emWYmzAFTtydMRTYFbA5Jf9laUJUnDc"
+API_KEY = "AIzaSyDpZt-JvZcrZ9mBX8G_8V-BIanWg5XeXbk"
+CSE_ID_M = "07b55181ea4c246ac"
+CSE_ID = "c78c141a8dc4647ab"
+LLM_MODEL_TEXT = "llama3.2:latest"
+LLM_MODEL_IMAGE = "llava:7b"
