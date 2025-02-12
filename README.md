@@ -9,6 +9,15 @@
 
 
 ## Installation
+Install special AI models in command prompt
+```
+ollama run llama3.2
+ollama run llama3.2:latest
+ollama run llava
+ollama run phi3:medium
+ollama run deepseek-r1
+```
+
 Execute this command to install necessary packages
 ```
 pip install langchain chromadb better-profanity ollama requests beautifulsoup4 googlesearch-python streamlit
