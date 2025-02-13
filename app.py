@@ -5,7 +5,14 @@ from embeddings import check_swear_words, censor_swear_words
 from rag import create_prompt_for_llm, generate_response_ollama
 from config import LLM_MODEL_TEXT, LLM_MODEL_IMAGE
 
+from telegram_bot import check_for_new_chat_ids, check_and_callback
+
 st.title("RAG Chatbot with Internet Search with Memory 🧠")
+
+st.sidebar.header("Telegram Bot Administration")
+if st.sidebar.button("Update chat IDs (Check for /start)"):
+    check_for_new_chat_ids()
+    st.sidebar.write("Chat IDs Updated")
 
 with st.form("prompt_form"):
     st.subheader("0. Choose model to analyze")
@@ -41,13 +48,16 @@ with st.form("prompt_form"):
         else: st.error(f"⚠️ Error clearing cache: {res}")
     
     if submitted:
+        # 🔹 Send Telegram Notification
+        check_and_callback(user_llm_query, user_search_query, search_type)
+        
         match option:
             case "Llama 3.2":
                 LLM_MODEL_TEXT = "llama3.2:latest"
             case "Phi3 Medium":
                 LLM_MODEL_TEXT = "phi3:medium"
             case "DeepSeek-R1 (7B)":
-                LLM_MODEL_TEXT = "deepseek-r1:7b"
+                LLM_MODEL_TEXT = "deepseek-r1:latest"
         
         try:
             # Start point
