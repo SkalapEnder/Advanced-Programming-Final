@@ -7,6 +7,7 @@
 2) #### Alibi Ospan
 3) #### Yeldos Sanakov
 
+Presentation link: https://www.canva.com/design/DAGe7DRhISw/ErBkY5_g-vmGi0IvPEYTdg/edit?utm_content=DAGe7DRhISw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
 ## Installation
 Install special AI models in command prompt
