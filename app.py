@@ -112,6 +112,9 @@ with st.form("prompt_form"):
                 
                 for img in search_images:
                     st.image(img)
+                    
+                with st.expander("User's query (after checking)"):
+                    st.write(user_llm_query)
 
             else:
                 search_images = scrape_images_from_internet(user_search_query, number_images)
@@ -131,6 +134,12 @@ with st.form("prompt_form"):
                 st.write(response_combined)
                 for img in search_images:
                     st.image(img)
+                    
+                with st.expander("Retrieved Content"):
+                    st.write(retrieved_content)
+                    
+                with st.expander("User's query (after checking)"):
+                    st.write(user_llm_query)
 
             status.empty()
             store_conversation(user_llm_query, response)
