@@ -11,19 +11,17 @@ from langchain.prompts import PromptTemplate
 import chromadb
 from better_profanity import profanity
 
-# Initialize LLM (Ollama)
-llm = Ollama(model="llama3.2")
 
+llm = Ollama(model="llama3.2")
 profanity.load_censor_words()
 
 # Load the sentence-transformers embedding model
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-# Initialize ChromaDB
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedding_model)
 
 # Create a persistent vector store
+short_term_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 long_term_memory = Chroma(persist_directory="./chroma_memory_db", embedding_function=embedding_model)
 
 # Define a function to process and store documents
@@ -31,13 +29,13 @@ def process_and_store_documents(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     docs = text_splitter.create_documents(documents)
 
-    # Add documents to ChromaDB
     vectorstore.add_documents(docs)
 
 # Function to retrieve documents using a query
 def retrieve_documents(query, k=5):
     retriever = vectorstore.as_retriever(search_kwargs={"k": k})
-    results = retriever.get_relevant_documents(query)
+    retrieved_docs = retriever.get_relevant_documents(query)
+    results = " ".join([doc.page_content for doc in retrieved_docs])
     return results
 
 # Function to store conversation in long-term memory
@@ -46,10 +44,29 @@ def store_conversation(user_input, bot_response):
     long_term_memory.add_texts([conversation_text])
 
 # Function to retrieve past conversations
-def retrieve_past_conversations(query, k=3):
-    retriever = long_term_memory.as_retriever(search_kwargs={"k": k})
-    results = retriever.get_relevant_documents(query)
-    return [doc.page_content for doc in results]
+def retrieve_past_conversation(query, k=3):
+    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
+    past_conversations = retriever.get_relevant_documents(query)
+    return "\n".join([doc.page_content for doc in past_conversations])
+
+def find_similar_queries(user_query, k=3):
+    query_embedding = embedding_model.embed_query(user_query)
+    
+    results = vectorstore.similarity_search_with_score(user_query, k=k)
+    similar_queries = [(doc.page_content, score) for doc, score in results if score > 0.7]  # Set threshold
+
+    return similar_queries
+
+
+def retrieve_chat_context(user_query):
+    similar_queries = find_similar_queries(user_query)
+
+    if similar_queries:
+        context = "\n".join([f"Past Query: {q}\nPast Answer: {a}" for q, a in similar_queries])
+        return f"Previous conversations:\n{context}\n\nNew Query: {user_query}"
+    else:
+        return user_query
+
 
 def check_swear_words(text):
     return profanity.contains_profanity(text)
@@ -70,11 +87,9 @@ def clear_cache(full_reset=False):
             if all_ids:
                 collection.delete(ids=all_ids)  # Delete all documents using IDs
             
-        print("Cache cleared successfully.")
+        return None
     except Exception as e:
-        print(f"Error clearing cache: {e}")
-        
-short_term_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        return str(e)
 
 tools = [
     Tool(

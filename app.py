@@ -1,13 +1,15 @@
 import streamlit as st
-from search import search_query_internet, scrape_images_from_internet
-from embeddings import process_and_store_documents, retrieve_documents, ask_agent, clear_cache, store_conversation, retrieve_past_conversations, short_term_memory
-from embeddings import check_swear_words, censor_swear_words
-from rag import create_prompt_for_llm, generate_response_ollama
+from datetime import datetime
+from search import *
+from embeddings import *
+from rag import *
 from config import LLM_MODEL_TEXT, LLM_MODEL_IMAGE
-
 from telegram_bot import check_for_new_chat_ids, check_and_callback
 
 st.title("RAG Chatbot with Internet Search with Memory 🧠")
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = load_chat_history()
 
 st.sidebar.header("Telegram Bot Administration")
 if st.sidebar.button("Update chat IDs (Check for /start)"):
@@ -30,12 +32,19 @@ with st.form("prompt_form"):
     st.subheader("3. Choose Search Options")
     search_type = st.radio("Select search type:", ('Text', 'Image', 'Both'))
     number_images = st.number_input("Number of images to analyze:", min_value=3, max_value=10, value=3)
-
-    submitted = st.form_submit_button("Send")
     
-    clear_docs = st.form_submit_button("🗑️ Clear Cache")
+    col1, col2 = st.columns(2)
+    col3, col4 = st.columns(2)
 
-    full_reset = st.form_submit_button("⚠️ Full Reset (Delete Collection)")
+    with col1:
+        submitted = st.form_submit_button("➡️ Send")
+    with col2:
+        clear_docs = st.form_submit_button("🗑️ Clear Cache (Short-Term)")
+    
+    with col3:
+        clear_history = st.form_submit_button("🔙 Clear Chat History (Not Memory)")
+    with col4:
+        full_reset = st.form_submit_button("⚠️ Full Reset (Long-Term)")
 
     if clear_docs:
         res = clear_cache()
@@ -47,7 +56,24 @@ with st.form("prompt_form"):
         if res == None: st.success("✅ ChromaDB collection deleted successfully!")
         else: st.error(f"⚠️ Error clearing cache: {res}")
     
+    if clear_history:
+        st.session_state.chat_history = []
+        res = clear_chat_history()
+        if res == None: st.success("✅ Chat history was deleted!")
+        else: st.error(f"⚠️ Error clearing chat history: {res}")
+    
     if submitted:
+        if not is_ollama_running(): 
+            st.error("❌ Ollama is NOT running! Start it with: `ollama serve`")
+            st.stop()
+            
+        if not is_ollama_model_here(LLM_MODEL_IMAGE):
+            lists = ["llava", "llava:latest"]
+            for i in range(len(lists)):
+                if is_ollama_model_here(LLM_MODEL_IMAGE):
+                    LLM_MODEL_IMAGE = lists[i]
+                    break
+        
         # 🔹 Send Telegram Notification
         check_and_callback(user_llm_query, user_search_query, search_type)
         
@@ -58,7 +84,11 @@ with st.form("prompt_form"):
                 LLM_MODEL_TEXT = "phi3:medium"
             case "DeepSeek-R1 (7B)":
                 LLM_MODEL_TEXT = "deepseek-r1:latest"
-        
+                
+        if not is_ollama_model_here(LLM_MODEL_TEXT):
+            st.error(f"❌ Ollama model is NOT installed! Write command on command-line console: `ollama run {LLM_MODEL_TEXT}`")
+            st.stop()
+            
         try:
             # Start point
             progress = st.progress(0)
@@ -72,21 +102,19 @@ with st.form("prompt_form"):
             # Retrieve long-term memory
             status.text("Retrieve past conversation...")
             progress.progress(10)
-            past_conversations = retrieve_past_conversations(user_llm_query, k=3)
-            past_context = "".join(past_conversations) if past_conversations else None
+            past_context = retrieve_past_conversation(user_llm_query, k=3)
             
             # Searching part
             status.text("Searching content...")
-            search_results = search_query_internet(user_search_query)
             progress.progress(20)
+            search_results = search_query_internet(user_search_query)
             
             # Process part
             status.text("Processing content...")
             progress.progress(30)
             
             process_and_store_documents(search_results)  # Step 1: Input Understanding	
-            retrieved_docs = retrieve_documents(user_llm_query, k=5) # Step 2: Information Retrieval    
-            retrieved_content = " ".join([doc.page_content for doc in retrieved_docs]) if retrieved_docs else ""
+            retrieved_content = retrieve_documents(user_llm_query, k=5) # Step 2: Information Retrieval    
             progress.progress(40)
 
             # Analyzing part
@@ -152,8 +180,23 @@ with st.form("prompt_form"):
                     st.write(user_llm_query)
 
             status.empty()
+            
+            # Store in session state for chat history
+            currdate = datetime.today().strftime("%H:%M:%S, %d %B %Y")
+            st.session_state.chat_history.append([f"User | {currdate}", user_llm_query])
+            st.session_state.chat_history.append(["Bot", response])
+            save_chat_history(st.session_state.chat_history)
             store_conversation(user_llm_query, response)
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
-    
+
+st.subheader("Chat History")
+for index, entry in enumerate(st.session_state.chat_history):
+    if not isinstance(entry, list) or len(entry) < 2:
+        continue
+
+    role, message = entry
+    if index % 2 != 0:
+        st.divider()
+    st.write(f"**{role}**: {message}")
