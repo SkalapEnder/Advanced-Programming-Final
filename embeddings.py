@@ -17,8 +17,8 @@ profanity.load_censor_words()
 
 # Load the sentence-transformers embedding model
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
-vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedding_model)
+chroma_client = chromadb.PersistentClient(path="./chroma_memory_db")
+vectorstore = Chroma(persist_directory="./chroma_memory_db", embedding_function=embedding_model)
 
 # Create a persistent vector store
 short_term_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -57,7 +57,6 @@ def find_similar_queries(user_query, k=3):
 
     return similar_queries
 
-
 def retrieve_chat_context(user_query):
     similar_queries = find_similar_queries(user_query)
 
@@ -76,20 +75,27 @@ def censor_swear_words(text):
 
 def clear_cache(full_reset=False):
     try:
+        # Get all existing collection names in ChromaDB
+        existing_collections = chroma_client.list_collections()  # Returns a list of collection names
+        
         if full_reset:
-            # Delete the entire collection
-            chroma_client.delete_collection("internet_documents")
+            # Check if "chat_history" exists before deleting
+            if "chat_history" in existing_collections:
+                chroma_client.delete_collection("chat_history")
+            else:
+                print("Warning: 'chat_history' collection does not exist, skipping full reset.")
         else:
-            # Retrieve the collection and delete all documents
-            collection = chroma_client.get_collection("internet_documents")
-            all_ids = [doc["id"] for doc in collection.get()["documents"]]  # Extract document IDs
-            
-            if all_ids:
-                collection.delete(ids=all_ids)  # Delete all documents using IDs
-            
+            # Check if "chat_history" exists before clearing documents
+            if "chat_history" in existing_collections:
+                collection = chroma_client.get_collection("chat_history")
+                collection.delete(where={})  # Deletes all documents in the collection
+            else:
+                print("Warning: 'chat_history' collection does not exist, nothing to delete.")
+        
         return None
     except Exception as e:
         return str(e)
+
 
 tools = [
     Tool(
