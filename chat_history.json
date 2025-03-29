@@ -1,10 +1,42 @@
 [
-    [
-        "User, 04:34:12, 15 February 2025",
-        "Describe the flag of USA"
-    ],
-    [
-        "Bot",
-        " The image you've provided is of the Flag of the United States, which features 13 alternating red and white stripes on a blue field, with 50 white stars arranged in a circle on the upper left corner of the flag. The flag was officially adopted by the United States Congress on July 4, 1776. It has been widely used as a symbol of national pride and unity in the United States.\n\nThe second image is also of the Flag of the United States, but this one has a color scheme that matches the Pantone Color System. The third image shows the flag with an additional depiction of stars from May 1, 1795, which was the date when the flag was first used.\n\nThe images all show the same flag design, but they differ in size and color scheme. "
-    ]
+    {
+        "search": "Current president of USA in 2025",
+        "query": "Write about current president of USA",
+        "response": " 1. The image shows a screenshot of a video with the title \"TRUMP SPEECH\" and the website \"cfr.org\". It appears to be a thumbnail for an article or video on that site.\n2. This is a thumbnail for a Medium post. The content of the post is not clear from this image, but it seems to include text.\n3. This image depicts a photograph of a man giving a speech with large crowds in the background. The image is credited to CNN and is labeled as \"USA-TRUMP-INAUGURATION\". ",
+        "type": "Image",
+        "images": [
+            "https://cdn.cfr.org/sites/default/files/styles/open_graph_article/public/image/2024/11/06vid-trump-speech-hp-sq-cover-pclg-videoSixteenByNine3000-v2.jpg",
+            "https://miro.medium.com/v2/resize:fit:1400/1*1cjJlSE_7zr-uWxk0F-onA.png",
+            "https://media.cnn.com/api/v1/images/stellar/prod/2025-01-21t005902z-457199300-rc20ecao8w1k-rtrmadp-3-usa-trump-inauguration.jpg?c=original"
+        ],
+        "timestamp": "22:38:15, 15 February 2025"
+    },
+    {
+        "search": "Flag of United States of America",
+        "query": "Write about flag of USA",
+        "response": " The first image is a digital illustration of the United States flag using the Pantone color matching system. It features the 13 horizontal stripes and 50 stars on a square background.\n\nThe second image is a photograph of the Betsy Ross flag, which was reportedly flown by U.S. Marines at Fort Moultrie during the first shots of the American Civil War. This flag is a modification of the original design by Betsy Ross, with 13 stripes and 13 stars instead of the 50 stripes and stars found on the modern U.S. flag.\n\nThe third image is an eBay listing for a vintage United States flag. The photo shows the flag from a distance, allowing you to see its red, white, and blue colors as well as its stars and stripes design.\n\nThe fourth image is another photograph of the U.S. flag, showcasing it flying against a clear sky. This particular image is high-resolution and features vivid colors and sharp details in the flag's fabric and design elements.\n\nThe fifth image is a vector illustration of the U.S. flag with stars and stripes. It has a clean and simple design, making it suitable for various uses such as logos or iconography. ",
+        "type": "Image",
+        "images": [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Flag_of_the_United_States_%28Pantone%29.svg/255px-Flag_of_the_United_States_%28Pantone%29.svg.png",
+            "https://cdn.britannica.com/76/4476-050-E643DD49/Betsy-Ross-legend-flag-united-states.jpg",
+            "https://i.ebayimg.com/images/g/0~gAAMXQ9qpRTk04/s-l1200.jpg",
+            "https://media.gettyimages.com/id/1728249971/photo/united-states-flag.jpg?s=612x612&w=gi&k=20&c=fIqkvDCAefGfHGE2jjtz9DTQKIp45Jf5SR8AZ5pISv4=",
+            "https://media.istockphoto.com/id/1334112655/vector/national-flag-united-states-of-america-vector-stars-and-stripes-old-glory-star-spangled.jpg?s=612x612&w=is&k=20&c=gkvGkxe0Vy2R5PL-p6YuTppziPMKJbf2wmieGDB_DNo="
+        ],
+        "timestamp": "22:40:11, 15 February 2025"
+    },
+    {
+        "search": "Current President of USA",
+        "query": "Write overview about the current president of USA",
+        "response": " The current President of the United States is Donald John Trump. He was sworn into office on January 20, 2025. Prior to his presidency, Trump had a career in business and real estate. During his time in office, he implemented various policies and made headlines for several controversial decisions. After his term ended, Trump faced legal scrutiny and continued to be involved in politics. Many former U.S. presidents have presidential libraries and museums that can provide more information about their lives and presidencies. ",
+        "type": "Both",
+        "images": [
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Joe_Biden_presidential_portrait.jpg/640px-Joe_Biden_presidential_portrait.jpg",
+            "https://planetrulers.com/wp-content/uploads/2017/01/us-president-joe-biden.jpg",
+            "https://usafricatrade.org/wp-content/uploads/2021/07/Joe-Biden-.png",
+            "https://cdn.britannica.com/79/230479-050-A5491A8A/US-President-Joe-Biden-delivers-remarks-about-the-Build-Back-Better-legislations-2021.jpg",
+            "https://brhscatseyeview.org/wp-content/uploads/2021/01/eo_1-1.jpg"
+        ],
+        "timestamp": "23:03:49, 15 February 2025"
+    }
 ]

@@ -158,7 +158,7 @@ with st.form("prompt_form"):
                     st.write(response_images)
                     
                     for img in search_images:
-                        st.image(img)
+                        st.image(img, width=400)
                         
                     with st.expander("User's query (after checking)"):
                         st.write(user_llm_query)
@@ -181,7 +181,7 @@ with st.form("prompt_form"):
                     st.write(f"### Combined Analysis ({LLM_MODEL_IMAGE}):")
                     st.write(response_combined)
                     for img in search_images:
-                        st.image(img)
+                        st.image(img, width=400)
                         
                     with st.expander("Retrieved Content"):
                         st.write(retrieved_content)
@@ -221,7 +221,7 @@ with st.form("prompt_form"):
             st.write(similar_query['response'])
             if len(similar_query['images']) > 0:
                 for image in similar_query['images']:
-                    st.image(image)
+                    st.image(image, width=400)
 
 st.subheader("Chat History")
 if len(st.session_state.chat_history) > 0:
@@ -229,8 +229,7 @@ if len(st.session_state.chat_history) > 0:
         if not isinstance(entry, dict) or "query" not in entry or "response" not in entry or "search" not in entry:
             continue
 
-        if index % 2 != 0:
-            st.divider()
+        st.divider()
         st.write(f"**Date**: {entry['timestamp']}")
         st.write(f"**User (Search)**: {entry['search']}")
         st.write(f"**User (LLM)**: {entry['query']}")
